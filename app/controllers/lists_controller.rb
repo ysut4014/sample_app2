@@ -3,10 +3,13 @@ class ListsController < ApplicationController
     @list =List.new
   end
   def create
-    list =List.new(list_params)
-    list.save
-    redirect_to '/top'
-  end  
+    @list = List.new(list_params)
+    if @list.save
+      redirect_to list_path(@list.id)
+    else
+      render :new
+    end  
+  end
   def index
     @lists = List.all
   end
@@ -19,9 +22,17 @@ class ListsController < ApplicationController
     @list = List.find(params[:id])
   end
   def create
-    list = List.new(list_params)
-    list.save
-    redirect_to list_path(list.id)
+    @list = List.new(list_params)
+    if @list.save
+      redirect_to list_path(@list.id)
+    else
+      render :new
+    end
+  end
+  def destroy
+    list = List.find(params[:id])
+    list.destroy
+    redirect_to '/lists'
   end
   def update
     list = List.find(params[:id])
@@ -31,6 +42,6 @@ class ListsController < ApplicationController
   private
   #ストロング
   def list_params
-    params.require(:list).permit(:title, :body)
+    params.require(:list).permit(:title, :body, :image)
   end
 end
